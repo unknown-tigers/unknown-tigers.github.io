@@ -1,17 +1,30 @@
-# UNKNOWN / Artist Studio deployment checklist
+# UNKNOWN / Artist Studio — current technical state
 
-Status: **public preview is live; artist registration is not live**.
+Site: https://unknown-tigers.github.io/
+GitHub org: unknown-tigers — entirely separate from Modular Friends.
+Supabase project: nqqdetebfghhpomcnvgp, bucket artist-submissions (private).
 
-Backend: Supabase project nqqdetebfghhpomcnvgp.
-Hosting: GitHub Pages unknown-tigers.github.io.
-Account: UNKNOWN / unowntigers@gmail.com. Keep Modular Friends separate.
+## Confirmed
+- UNKNOWN website hosted through GitHub Pages.
+- Supabase tables and private upload bucket previously created.
+- Client-side draft studio source exists and was syntax checked.
+- Production website does not expose an artist signup form.
+- Public GitHub repositories must never include a service_role key, database password, or private artist work.
 
-## Before enabling user signup
-1. Review the actual RLS USING and WITH CHECK expressions using SUPABASE_SECURITY_AUDIT.sql in Supabase SQL Editor. Verify users cannot read or edit another artist's data, cannot approve their own profile/artworks, and images remain private.
-2. Confirm storage.objects policies restrict files to owner-ID path prefix and the private artist-submissions bucket.
-3. Retrieve only the public publishable/anon key from Supabase Dashboard > Project Settings > API Keys; never use a secret or service_role key in a webpage.
-4. Confirm allowed redirect URL is https://unknown-tigers.github.io/ for authentication emails.
-5. Stage the existing Artist Studio v4.1 front-end privately and run two-account tests with different browsers: sign-up, email confirmation, login, profile, work and image upload, edits, submission, no unauthorized access, no auto-approval.
-6. Only then link registration publicly and create a curation/admin workflow.
+## Still unverified / do NOT mark as completed
+1. Full RLS predicates, especially prevention of self-approval.
+2. Current Supabase publishable/anon key (not a secret; required for actual client connection).
+3. Email verification and authorized redirect URLs for unknown-tigers.github.io.
+4. Live sign-up, login, image upload, submission with real accounts.
+5. Separate user A/user B ownership tests and storage isolation tests.
+6. Curator approval workflow, public approved-artists display, legal privacy notices.
 
-No artist-submitted work or internal credentials should be committed to this repository.
+## Sequential release gates
+GATE A: execute SUPABASE_SECURITY_AUDIT.sql and inspect results.
+GATE B: correct any insecure database policy before exposing registration.
+GATE C: configure only a publishable key in the browser, test privately.
+GATE D: test account A and B, submissions, 1–3 images per artwork, 10 works cap.
+GATE E: implement trusted-only approval and public approved content.
+GATE F: enable invitation-only rollout. Keep public registration closed until E is complete.
+
+Do not rely on robots noindex for privacy. GitHub Pages are publicly reachable.
